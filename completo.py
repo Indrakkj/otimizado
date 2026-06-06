@@ -1,6 +1,7 @@
 import administrador.producaoADM as producaoADM
 import administrador.produtoADM as produtoADM
 import administrador.estoqueADM as estoqueADM
+import cliente.compraC as clienteC
 administrador = [['henrique','henrique114'],['pedro','pedro2245']]
 produto = []
 nome_p = ''
@@ -36,10 +37,11 @@ def acessoUsuario(escolhaADMouC,acesso):
                 print("Senha inválida.")
 
             else:
-                escolhaADMouC.append([nome, senha])
-                print("Cadastro concluído com sucesso!")
-                acesso = True
-                return acesso 
+                with open ('logins.txt' , 'a' , encoding= 'utf-8') as escolhaADMouC:
+                    escolhaADMouC.write(f'{nome}, {senha} \n')
+                    print("Cadastro concluído com sucesso!")
+                    acesso = True
+                    return acesso 
 
 def entrar(escolhaADMouC,acesso):
         while True:
@@ -56,10 +58,11 @@ def entrar(escolhaADMouC,acesso):
                 senha = input('Senha: ')
                 acesso = False
                 print ( '-'*50)
-                for i in escolhaADMouC:
-                    if nome == i[0] and senha == i[1]:
-                        acesso = True
-                        return acesso
+                with open ('logins.txt' , 'r' , encoding= 'utf-8') as arquivo:
+                    for i in arquivo:
+                        if nome == i[0] and senha == i[1]:
+                            acesso = True
+                            return acesso
                         
                 if not acesso:
                     print('Senha ou usuário inválido!')
@@ -286,7 +289,7 @@ while True:
                             print('Ok!')
                             break
                     else:
-                        entrar(cliente)
+                        entrar(cliente,acesso)
 
             elif aba == "0":
                 print("Até mais!")
@@ -296,999 +299,88 @@ while True:
                 print("Digite uma das opções acima.")
                 continue
             dinheiro = 0
-
             while True:
+                    voltar_comprar = input("Deseja ir para a aba de compras? ").lower()   
+                    if voltar_comprar == "sim":
+                        dinheiro = clienteC.inserirSaldo(dinheiro)               
+                        animalOUproduto= input("Deseja comprar produto ou animal: ")
 
-                voltar_comprar = input("Deseja ir para a aba de compras? ").lower()
-
-                if voltar_comprar == "sim":
-
-                    print(f"Saldo da conta: R$ {dinheiro}")
-
-                    while True:
-                        numeros = "1234567890"
-                        dinheiro_valido = True
-                        dinheiro1 = input("Quanto de saldo deseja por na sua conta? ")
-                        for d in dinheiro1:
-                            if d not in numeros:
-                                dinheiro_valido = False
-                        if dinheiro_valido and dinheiro1 != "":
-                            dinheiro1 = int(dinheiro1)
-                            if dinheiro1 >=0:
-                                dinheiro+= dinheiro1
-                                print(f"Saldo atualizado com sucesso! Saldo atual: R$ {dinheiro}")
-                                break
-                        else:
-                            print("Saldo nao possivel de adicionar.Tente novamente")
+                        if animalOUproduto == "produto":
+                            clienteC.produtoC(produto)
+                        elif animalOUproduto == "animal":
+                            clienteC.animalC(animal)
                             
+                        else:
+                            print('Opção inválida!')
+                            break
                     
-                    animalOUproduto= input("Deseja comprar produto ou animal: ")
-
-                    if animalOUproduto == "produto":
-                        print("Itens disponíveis:")
-
-                        for i, p in enumerate(produto, start=1):
-
-                            print(f"{i} - {p[0]} | preço: R$ {p[1]}| estoque: {p[2]} ")
-
-                        escolha = int(input("Qual produto deseja comprar? (1 , 2...): "))
-
-                        quantidade = int(input("Quantidade da compra: "))
-
-                        print("Antes de efetuar o pagamento, confira as formas de pagamento:")
-                        print("1 - Pix: desconto de 5%")
-                        print("2 - Cartão: desconto de 10%")
-
-                        desconto = 0
-                       
-
-                        tipo_de_pagamento = input("Escolha uma opção de pagamento: ")
-
-                        if tipo_de_pagamento == "1":
-
-                                desconto = 0.05
-                                if escolha < 1 or escolha > len(produto):
-                                    print("produto nao encontrado")
-                                elif produto != []:
-                                    produto_escolha = produto[escolha - 1]
-                                    nome = produto_escolha[0]
-                                    estoque = produto_escolha[2]
-                                    preco = produto_escolha[1]
-
-                                    if quantidade <= estoque:
-
-                                        estoque -= quantidade
-                                        produto_escolha[2] -= quantidade
-
-                                        valor_total = preco * quantidade
-                                        valor_desc = valor_total * desconto
-                                        valor_final = valor_total - valor_desc
-
-                                        if dinheiro >= valor_final:
-
-                                            dinheiro -= valor_final
-
-                                            print(f"Sua compra foi realizada com sucesso! Valor final: R$ {valor_final}")
-
-                                            print(f"Produto adquirido: {produto_escolha[0]} | Quantidade: {quantidade}")
-
-                                            fretes = [89.90, 19.99, 0]
-
-                                            print("Escolha a opção de entrega desejada:")
-                                            print("1 - Fast: entrega em até 8 dias | frete: R$ 89,90")
-                                            print("2 - Medium: entrega em até 16 dias | frete: R$ 19,99")
-                                            print("3 - Slow: entrega em até 30 dias | frete grátis")
-
-                                            while True:
-
-                                                transporte = int(input("Escolha sua transportadora: "))
-
-                                                if transporte == 1 and dinheiro >= 89.90:
-
-                                                    dinheiro -= fretes[0]
-
-                                                    print("Entrega Fast selecionada. Obrigado pela preferência!")
-                                                    break
-
-                                                elif transporte == 2 and dinheiro >= 19.99:
-
-                                                    dinheiro -= fretes[1]
-
-                                                    print("Entrega Medium selecionada. Obrigado pela preferência!")
-                                                    break
-
-                                                elif transporte == 3:
-
-                                                    dinheiro -= fretes[2]
-
-                                                    print("Entrega Slow selecionada. Obrigado pela preferência!")
-                                                    break
-
-                                                else:
-
-                                                    print("Transportadora indisponível ou saldo insuficiente.")
-                                                    continue
-
-                                        elif dinheiro < valor_final:
-
-                                            p[2] += quantidade
-
-                                            print("Saldo insuficiente.")
-                                            continue
-                                
-                                    else:
-
-                                        print("Estoque insuficiente.")
-                                        continue
-                                
-                        elif tipo_de_pagamento == "2":
-
-                            while True:
-
-                                valido = True
-
-                                cartao = input("Adicione os dados do cartão: ")
-
-                                cartao_sem_espaco = cartao.replace(" ", "")
-
-                                for i in cartao_sem_espaco:
-
-                                    if i not in "0123456789":
-                                        valido = False
-
-                                if len(cartao_sem_espaco) == 16 and valido == True:
-
-                                    desconto = 0.1
-
-                                    print("Cartão adicionado com sucesso!")
-                                    break
-
-                                else:
-                                    print("Cartão inválido.")
-                                    continue
-                            if escolha < 1 or escolha > len(produto):
-                                print("produto nao encontrado")
-                            elif produto != []:
-                                produto_escolha = produto[escolha - 1]
-                                nome = produto_escolha[0]
-                                estoque = produto_escolha[2]
-                                preco = produto_escolha[1]
-
-                                if quantidade <= estoque:
-
-                                    estoque -= quantidade
-
-                                    produto_escolha[2] -= quantidade
-
-                                    valor_total = preco * quantidade
-                                    valor_desc = valor_total * desconto
-                                    valor_final = valor_total - valor_desc
-
-                                    if dinheiro >= valor_final:
-
-                                        dinheiro -= valor_final
-
-                                        print(f"Sua compra foi realizada com sucesso! Valor final: R$ {valor_final}")
-
-                                        print(f"Produto adquirido: {produto_escolha[0]} | Quantidade: {quantidade}")
-
-                                        print(f"Saldo atual da conta: R$ {dinheiro}")
-
-                                        fretes = [89.90, 19.99, 0]
-
-                                        print("Escolha a opção de entrega desejada:")
-                                        print("1 - Fast: entrega em até 8 dias | frete: R$ 89,90")
-                                        print("2 - Medium: entrega em até 16 dias | frete: R$ 19,99")
-                                        print("3 - Slow: entrega em até 30 dias | frete grátis")
-
-                                        while True:
-
-                                            transporte = int(input("Escolha sua transportadora: "))
-
-                                            if transporte == 1 and dinheiro >= 89.90:
-
-                                                dinheiro -= fretes[0]
-
-                                                print("Entrega Fast selecionada. Obrigado pela preferência!")
-                                                break
-
-                                            elif transporte == 2 and dinheiro >= 19.99:
-
-                                                dinheiro -= fretes[1]
-
-                                                print("Entrega Medium selecionada. Obrigado pela preferência!")
-                                                break
-
-                                            elif transporte == 3:
-
-                                                dinheiro -= fretes[2]
-
-                                                print("Entrega Slow selecionada. Obrigado pela preferência!")
-                                                break
-
-                                            else:
-
-                                                print("Transportadora indisponível ou saldo insuficiente.")
-                                                continue
-
-                                    elif dinheiro < valor_final:
-
-                                        p[2] += quantidade
-
-                                        print("Saldo insuficiente.")
-                            
-                                
-                                else:
-
-                                    print("Estoque insuficiente.")
-                           
-                        else:
-                            print("Forma de pagamento inválida.")
-                    elif animalOUproduto == "animal":
-                        achou=False
-                        for a in animal:
-                            print(f"Nome: {a[0]}")
-                            print(f"Tipo: {a[1]}")
-                            print(f"Identificação: {a[2]}")
-                            print(f"Peso: {a[3]}")
-                            print(f"Valor: {a[4]}")
-                            print("-"*50)
-                        pesquisa = input("Qual animal você quer comprar (Digite a identificação)? ")
-                        for i in range(len(animal)):
-                            if animal[i][2]==pesquisa:
-                                achou=True
-                                break
-                        if achou:
-                            print(f"Nome: {animal[i][0]}")
-                            print(f"Tipo: {animal[i][1]}")
-                            print(f"Identificação: {animal[i][2]}")
-                            print(f"Peso: {animal[i][3]}")
-                            print(f"Valor: {animal[i][4]}")
-                            print("-"*50)
-                            pesquisa = input("Deseja compra esse animal? ").lower()
-                            if pesquisa == "sim":
-                                print("Antes de efetuar o pagamento, confira as formas de pagamento:")
-                                print("1 - Pix: desconto de 5%")
-                                print("2 - Cartão: desconto de 10%")
-
-                                desconto = 0
-
-                                tipo_de_pagamento = input("Escolha uma opção de pagamento: ")
-                                if tipo_de_pagamento == "1":
-
-                                    desconto = 0.05
-
-                                    nome = animal[i][0]
-                                    preco = animal[i][4]
-
-                                    valor_total = preco 
-                                    valor_desc = valor_total * desconto
-                                    valor_final = valor_total - valor_desc
-
-                                    if dinheiro >= valor_final:
-
-                                        dinheiro -= valor_final
-
-                                        print(f"Sua compra foi realizada com sucesso! Valor final: R$ {valor_final}")
-
-                                        print(f"Produto adquirido:")
-                                        print(f"Nome: {animal[i][0]}")
-                                        print(f"Tipo: {animal[i][1]}")
-                                        print(f"Identificação: {animal[i][2]}")
-                                        print(f"Peso: {animal[i][3]}")
-                                        print(f"Valor: {valor_final}")
-                                        print("-"*50)
-
-                                        fretes = [89.90, 19.99, 0]
-
-                                        print("Escolha a opção de entrega desejada:")
-                                        print("1 - Fast: entrega em até 8 dias | frete: R$ 89,90")
-                                        print("2 - Medium: entrega em até 16 dias | frete: R$ 19,99")
-                                        print("3 - Slow: entrega em até 30 dias | frete grátis")
-
-                                        while True:
-
-                                            transporte = int(input("Escolha sua transportadora: "))
-
-                                            if transporte == 1 and dinheiro >= 89.90:
-
-                                                dinheiro -= fretes[0]
-
-                                                print("Entrega Fast selecionada. Obrigado pela preferência!")
-                                                animal.remove(animal[i])
-                                                break
-
-                                            elif transporte == 2 and dinheiro >= 19.99:
-
-                                                dinheiro -= fretes[1]
-
-                                                print("Entrega Medium selecionada. Obrigado pela preferência!")
-                                                animal.remove(animal[i])
-                                                break
-
-                                            elif transporte == 3:
-
-                                                dinheiro -= fretes[2]
-
-                                                print("Entrega Slow selecionada. Obrigado pela preferência!")
-                                                animal.remove(animal[i])
-                                                break
-
-                                            else:
-
-                                                print("Transportadora indisponível ou saldo insuficiente.")
-                                                continue
-
-                                    elif dinheiro < valor_final:
-
-                                    
-
-                                        print("Saldo insuficiente.")
-                                        continue
-
-                                
-
-                                elif tipo_de_pagamento == "2":
-
-                                    while True:
-
-                                        valido = True
-
-                                        cartao = input("Adicione os dados do cartão: ")
-
-                                        cartao_sem_espaco = cartao.replace(" ", "")
-
-                                        for numero in cartao_sem_espaco:
-
-                                            if numero not in "0123456789":
-                                                valido = False
-
-                                        if len(cartao_sem_espaco) == 16 and valido == True:
-
-                                            desconto = 0.1
-
-                                            print("Cartão adicionado com sucesso!")
-                                            break
-
-                                        else:
-                                            print("Cartão inválido.")
-                                            continue
-
-                                
-
-                                    nome = animal[i][0]
-                                    preco = animal[i][4]
-
-                                    valor_total = preco 
-                                    valor_desc = valor_total * desconto
-                                    valor_final = valor_total - valor_desc
-
-                                    if dinheiro >= valor_final:
-
-                                        dinheiro -= valor_final
-
-                                        print(f"Sua compra foi realizada com sucesso! Valor final: R$ {valor_final}")
-
-                                        print(f"Produto adquirido:")
-                                        print(f"Nome: {animal[i][0]}")
-                                        print(f"Tipo: {animal[i][1]}")
-                                        print(f"Identificação: {animal[i][2]}")
-                                        print(f"Peso: {animal[i][3]}")
-                                        print(f"Valor: {valor_final}")
-                                        print("-"*50)
-
-                                        print(f"Saldo atual da conta: R$ {dinheiro}")
-
-                                        fretes = [89.90, 19.99, 0]
-
-                                        print("Escolha a opção de entrega desejada:")
-                                        print("1 - Fast: entrega em até 8 dias | frete: R$ 89,90")
-                                        print("2 - Medium: entrega em até 16 dias | frete: R$ 19,99")
-                                        print("3 - Slow: entrega em até 30 dias | frete grátis")
-
-                                        while True:
-
-                                            transporte = int(input("Escolha sua transportadora: "))
-
-                                            if transporte == 1 and dinheiro >= 89.90:
-
-                                                dinheiro -= fretes[0]
-
-                                                print("Entrega Fast selecionada. Obrigado pela preferência!")
-                                                animal.remove(animal[i])
-                                                break
-
-                                            elif transporte == 2 and dinheiro >= 19.99:
-
-                                                dinheiro -= fretes[1]
-
-                                                print("Entrega Medium selecionada. Obrigado pela preferência!")
-                                                animal.remove(animal[i])
-                                                break
-
-                                            elif transporte == 3:
-
-                                                dinheiro -= fretes[2]
-
-                                                print("Entrega Slow selecionada. Obrigado pela preferência!")
-                                                animal.remove(animal[i])
-                                                break
-
-                                            else:
-
-                                                print("Transportadora indisponível ou saldo insuficiente.")
-                                                continue
-                                            
-
-                                    elif dinheiro < valor_final:
-
-                                        
-
-                                        print("Saldo insuficiente.")
-
-                                
-                                else:
-                                    print("Forma de pagamento inválida.")
-                        else:
-                            print("Animal não encontrado!")
-                        
-
-
-
-
-                else:
-                    break
-
-            print(f"Saldo da conta: R$ {dinheiro}")
-
-            while True:
-
-                voltar_inicio = input("""
-            Deseja sair ou voltar para a aba de login?
-            1 - Sair
-            2 - Voltar para a aba de login
-            """)
-
-                if voltar_inicio == "1":
-                    print("Obrigado por acessar nosso site!")
-                    quit()
-                    break
-                    
-
-                elif voltar_inicio == "2":   
-                    while True:
-                        print("Olá, cliente! Bem-vindo ao site + Pecoaria.")
-                        print("-" * 50)
-                        print("--- ABA DE LOGIN ---")
-                        print("1 - Cadastrar")
-                        print("2 - Login")
-                        print("0 - Sair")
-                        print("-" * 50)
-
-                        aba = input("Escolha uma opção para prosseguir: ")
-
-                        if aba == "1":
-
-                            while True:
-
-                                nome = input("Digite um nome de usuário válido: ")
-                                nome_existe=False
-                                for r in range(len(cliente)):
-                                    if cliente[r][0] == nome: 
-                                    
-                                        nome_existe = True
-                                        break
-                                if nome_existe:
-                                    print('Esse nome ja pertence a outro usuário!')
-
-                                else:
-                                    senha = input("Digite sua senha: ")
-                                    confirm_senha = input("Confirme sua senha: ")
-                                
-
-                                    if senha != confirm_senha:
-                                        print("Senha inválida.")
-
-                                    else:
-                                        cliente.append([nome, senha])
-                                        print("Cadastro concluído com sucesso!")
-                                        acesso = True
-                                        break
-
-                        elif aba == "2":
-
-                            if cliente == []:
-                                print("Nenhum usuário encontrado.")
-                                encontrado = False
-                                continue
-                            else:
-                                while True:
-
-                                    print("Bem-vindo de volta!")
-
-                                    nome = input("Digite seu nome: ")
-                                    senha = input("Digite sua senha: ")
-
-                                    encontrado = False
-
-                                    for usuario in cliente:
-
-                                        if usuario[0] == nome and usuario[1] == senha:
-
-                                            print("Olá,", nome, "! Bem-vindo de volta.")
-                                            acesso = True
-                                            encontrado = True
-                                            break
-
-                                    if encontrado == True:
-                                        break
-
-                                    else:
-                                        print("Usuário não encontrado.")
-
-                        elif aba == "0":
-                            print("Até mais!")
-                            quit()
-
-                        else:
-                            print("Digite uma das opções acima.")
-                            continue
-                        dinheiro = 0
-
+                        print(f"Saldo da conta: R$ {dinheiro}")
+                    else:
                         while True:
 
-                            voltar_comprar = input("Deseja ir para a aba de compras? ")
-
-                            if voltar_comprar == "sim":
-
-                                print(f"Saldo da conta: R$ {dinheiro}")
-
-                              
-                                while True:
-                                    numeros = "1234567890"
-                                    dinheiro_valido = True
-                                    dinheiro1 = input("Quanto de saldo deseja por na sua conta? ")
-                                    for d in dinheiro1:
-                                        if d not in numeros:
-                                            dinheiro_valido = False
-                                    if dinheiro_valido and dinheiro1 != "":
-                                        dinheiro1 = int(dinheiro1)
-                                        if dinheiro1 >=0:
-                                            dinheiro+= dinheiro1
-                                            print(f"Saldo atualizado com sucesso! Saldo atual: R$ {dinheiro}")
-                                            break
-                                    else:
-                                        print("Saldo não possivel de adicionar.Tente novamente")
-                                animalOUproduto= input("Deseja comprar produto ou animal: ")
-
-                                if animalOUproduto == "produto":
-                                    print("Itens disponíveis:")
-
-                                    for i, p in enumerate(produto, start=1):
-
-                                        print(f"{i} - {p[0]} | preço: R$ {p[1]}| estoque: {p[2]} ")
-
-                                    escolha = int(input("Qual produto deseja comprar? (1 ou 2): "))
-
-                                    quantidade = int(input("Quantidade da compra: "))
-
-                                    print("Antes de efetuar o pagamento, confira as formas de pagamento:")
-                                    print("1 - Pix: desconto de 5%")
-                                    print("2 - Cartão: desconto de 10%")
-
-                                    desconto = 0
-
-                                    tipo_de_pagamento = input("Escolha uma opção de pagamento: ")
-
-                                    if tipo_de_pagamento == "1":
-                                    
-                                            desconto = 0.05
-                                            if escolha < 1 or escolha > len(produto):
-                                                print("produto nao encontrado")
-                                            elif produto != []:
-                                                produto_escolha = produto[escolha - 1]
-                                                nome = produto_escolha[0]
-                                                estoque = produto_escolha[2]
-                                                preco = produto_escolha[1]
-
-                                                if quantidade <= estoque:
-
-                                                    estoque -= quantidade
-                                                    produto_escolha[2] -= quantidade
-
-                                                    valor_total = preco * quantidade
-                                                    valor_desc = valor_total * desconto
-                                                    valor_final = valor_total - valor_desc
-
-                                                    if dinheiro >= valor_final:
-
-                                                        dinheiro -= valor_final
-
-                                                        print(f"Sua compra foi realizada com sucesso! Valor final: R$ {valor_final}")
-
-                                                        print(f"Produto adquirido: {produto_escolha[0]} | Quantidade: {quantidade}")
-
-                                                        fretes = [89.90, 19.99, 0]
-
-                                                        print("Escolha a opção de entrega desejada:")
-                                                        print("1 - Fast: entrega em até 8 dias | frete: R$ 89,90")
-                                                        print("2 - Medium: entrega em até 16 dias | frete: R$ 19,99")
-                                                        print("3 - Slow: entrega em até 30 dias | frete grátis")
-
-                                                        while True:
-
-                                                            transporte = int(input("Escolha sua transportadora: "))
-
-                                                            if transporte == 1 and dinheiro >= 89.90:
-
-                                                                dinheiro -= fretes[0]
-
-                                                                print("Entrega Fast selecionada. Obrigado pela preferência!")
-                                                                break
-
-                                                            elif transporte == 2 and dinheiro >= 19.99:
-
-                                                                dinheiro -= fretes[1]
-
-                                                                print("Entrega Medium selecionada. Obrigado pela preferência!")
-                                                                break
-
-                                                            elif transporte == 3:
-
-                                                                dinheiro -= fretes[2]
-
-                                                                print("Entrega Slow selecionada. Obrigado pela preferência!")
-                                                                break
-
-                                                            else:
-
-                                                                print("Transportadora indisponível ou saldo insuficiente.")
-                                                                continue
-
-                                                    elif dinheiro < valor_final:
-
-                                                        p[2] += quantidade
-
-                                                        print("Saldo insuficiente.")
-                                                        continue
-                                            
-                                                else:
-
-                                                    print("Estoque insuficiente.")
-                                                    continue
-                                           
-                                    elif tipo_de_pagamento == "2":
-
-                                        while True:
-
-                                            valido = True
-
-                                            cartao = input("Adicione os dados do cartão: ")
-
-                                            cartao_sem_espaco = cartao.replace(" ", "")
-
-                                            for i in cartao_sem_espaco:
-
-                                                if i not in "0123456789":
-                                                    valido = False
-
-                                            if len(cartao_sem_espaco) == 16 and valido == True:
-
-                                                desconto = 0.1
-
-                                                print("Cartão adicionado com sucesso!")
-                                                break
-
-                                            else:
-                                                print("Cartão inválido.")
-                                                continue
-                                        if escolha < 1 or escolha > len(produto):
-                                            print("produto nao encontrado")
-                                        elif produto != []:
-                                            produto_escolha = produto[escolha - 1]
-                                            nome = produto_escolha[0]
-                                            estoque = produto_escolha[2]
-                                            preco = produto_escolha[1]
-
-                                            if quantidade <= estoque:
-
-                                                estoque -= quantidade
-
-                                                produto_escolha[2] -= quantidade
-
-                                                valor_total = preco * quantidade
-                                                valor_desc = valor_total * desconto
-                                                valor_final = valor_total - valor_desc
-
-                                                if dinheiro >= valor_final:
-
-                                                    dinheiro -= valor_final
-
-                                                    print(f"Sua compra foi realizada com sucesso! Valor final: R$ {valor_final}")
-
-                                                    print(f"Produto adquirido: {produto_escolha[0]} | Quantidade: {quantidade}")
-
-                                                    print(f"Saldo atual da conta: R$ {dinheiro}")
-
-                                                    fretes = [89.90, 19.99, 0]
-
-                                                    print("Escolha a opção de entrega desejada:")
-                                                    print("1 - Fast: entrega em até 8 dias | frete: R$ 89,90")
-                                                    print("2 - Medium: entrega em até 16 dias | frete: R$ 19,99")
-                                                    print("3 - Slow: entrega em até 30 dias | frete grátis")
-
-                                                    while True:
-
-                                                        transporte = int(input("Escolha sua transportadora: "))
-
-                                                        if transporte == 1 and dinheiro >= 89.90:
-
-                                                            dinheiro -= fretes[0]
-
-                                                            print("Entrega Fast selecionada. Obrigado pela preferência!")
-                                                            break
-
-                                                        elif transporte == 2 and dinheiro >= 19.99:
-
-                                                            dinheiro -= fretes[1]
-
-                                                            print("Entrega Medium selecionada. Obrigado pela preferência!")
-                                                            break
-
-                                                        elif transporte == 3:
-
-                                                            dinheiro -= fretes[2]
-
-                                                            print("Entrega Slow selecionada. Obrigado pela preferência!")
-                                                            break
-
-                                                        else:
-
-                                                            print("Transportadora indisponível ou saldo insuficiente.")
-                                                            continue
-
-                                                elif dinheiro < valor_final:
-
-                                                    p[2] += quantidade
-
-                                                    print("Saldo insuficiente.")
-                                        
-                                            
-                                            else:
-
-                                                print("Estoque insuficiente.")
-                                       
-                                    else:
-                                        print("Forma de pagamento inválida.")
-                                elif animalOUproduto == "animal":
-                                    achou=False
-                                    for a in animal:
-                                        print(f"Nome: {a[0]}")
-                                        print(f"Tipo: {a[1]}")
-                                        print(f"Identificação: {a[2]}")
-                                        print(f"Peso: {a[3]}")
-                                        print(f"Valor: {a[4]}")
-                                        print("-"*50)
-                                    pesquisa = input("Qual animal você quer comprar (Digite a identificação)? ")
-                                    for i in range(len(animal)):
-                                        if animal[i][2]==pesquisa:
-                                            achou=True
-                                            break
-                                    if achou:
-                                        print(f"Nome: {animal[i][0]}")
-                                        print(f"Tipo: {animal[i][1]}")
-                                        print(f"Identificação: {animal[i][2]}")
-                                        print(f"Peso: {animal[i][3]}")
-                                        print(f"Valor: {animal[i][4]}")
-                                        print("-"*50)
-                                        pesquisa = input("Deseja compra esse animal? ").lower()
-                                        if pesquisa == "sim":
-                                            print("Antes de efetuar o pagamento, confira as formas de pagamento:")
-                                            print("1 - Pix: desconto de 5%")
-                                            print("2 - Cartão: desconto de 10%")
-
-                                            desconto = 0
-
-                                            tipo_de_pagamento = input("Escolha uma opção de pagamento: ")
-                                            if tipo_de_pagamento == "1":
-
-                                                desconto = 0.05
-
-                                                nome = animal[i][0]
-                                                preco = animal[i][4]
-
-                                                valor_total = preco 
-                                                valor_desc = valor_total * desconto
-                                                valor_final = valor_total - valor_desc
-
-                                                if dinheiro >= valor_final:
-
-                                                    dinheiro -= valor_final
-
-                                                    print(f"Sua compra foi realizada com sucesso! Valor final: R$ {valor_final}")
-
-                                                    print(f"Produto adquirido:")
-                                                    print(f"Nome: {animal[i][0]}")
-                                                    print(f"Tipo: {animal[i][1]}")
-                                                    print(f"Identificação: {animal[i][2]}")
-                                                    print(f"Peso: {animal[i][3]}")
-                                                    print(f"Valor: {valor_final}")
-                                                    print("-"*50)
-
-                                                    fretes = [89.90, 19.99, 0]
-
-                                                    print("Escolha a opção de entrega desejada:")
-                                                    print("1 - Fast: entrega em até 8 dias | frete: R$ 89,90")
-                                                    print("2 - Medium: entrega em até 16 dias | frete: R$ 19,99")
-                                                    print("3 - Slow: entrega em até 30 dias | frete grátis")
-
-                                                    while True:
-
-                                                        transporte = int(input("Escolha sua transportadora: "))
-
-                                                        if transporte == 1 and dinheiro >= 89.90:
-
-                                                            dinheiro -= fretes[0]
-
-                                                            print("Entrega Fast selecionada. Obrigado pela preferência!")
-                                                            animal.remove(animal[i])
-                                                            break
-
-                                                        elif transporte == 2 and dinheiro >= 19.99:
-
-                                                            dinheiro -= fretes[1]
-
-                                                            print("Entrega Medium selecionada. Obrigado pela preferência!")
-                                                            animal.remove(animal[i])
-                                                            break
-
-                                                        elif transporte == 3:
-
-                                                            dinheiro -= fretes[2]
-
-                                                            print("Entrega Slow selecionada. Obrigado pela preferência!")
-                                                            animal.remove(animal[i])
-                                                            break
-
-                                                        else:
-
-                                                            print("Transportadora indisponível ou saldo insuficiente.")
-                                                            continue
-
-                                                elif dinheiro < valor_final:
-
-                                                
-
-                                                    print("Saldo insuficiente.")
-                                                    continue
-
-                                            
-
-                                            elif tipo_de_pagamento == "2":
-
-                                                while True:
-
-                                                    valido = True
-
-                                                    cartao = input("Adicione os dados do cartão: ")
-
-                                                    cartao_sem_espaco = cartao.replace(" ", "")
-
-                                                    for numero in cartao_sem_espaco:
-
-                                                        if numero not in "0123456789":
-                                                            valido = False
-
-                                                    if len(cartao_sem_espaco) == 16 and valido == True:
-
-                                                        desconto = 0.1
-
-                                                        print("Cartão adicionado com sucesso!")
-                                                        break
-
-                                                    else:
-                                                        print("Cartão inválido.")
-                                                        continue
-
-                                            
-
-                                                nome = animal[i][0]
-                                                preco = animal[i][4]
-
-                                                valor_total = preco 
-                                                valor_desc = valor_total * desconto
-                                                valor_final = valor_total - valor_desc
-
-                                                if dinheiro >= valor_final:
-
-                                                    dinheiro -= valor_final
-
-                                                    print(f"Sua compra foi realizada com sucesso! Valor final: R$ {valor_final}")
-
-                                                    print(f"Produto adquirido:")
-                                                    print(f"Nome: {animal[i][0]}")
-                                                    print(f"Tipo: {animal[i][1]}")
-                                                    print(f"Identificação: {animal[i][2]}")
-                                                    print(f"Peso: {animal[i][3]}")
-                                                    print(f"Valor: {valor_final}")
-                                                    print("-"*50)
-
-                                                    print(f"Saldo atual da conta: R$ {dinheiro}")
-
-                                                    fretes = [89.90, 19.99, 0]
-
-                                                    print("Escolha a opção de entrega desejada:")
-                                                    print("1 - Fast: entrega em até 8 dias | frete: R$ 89,90")
-                                                    print("2 - Medium: entrega em até 16 dias | frete: R$ 19,99")
-                                                    print("3 - Slow: entrega em até 30 dias | frete grátis")
-
-                                                    while True:
-
-                                                        transporte = int(input("Escolha sua transportadora: "))
-
-                                                        if transporte == 1 and dinheiro >= 89.90:
-
-                                                            dinheiro -= fretes[0]
-
-                                                            print("Entrega Fast selecionada. Obrigado pela preferência!")
-                                                            animal.remove(animal[i])
-                                                            break
-
-                                                        elif transporte == 2 and dinheiro >= 19.99:
-
-                                                            dinheiro -= fretes[1]
-
-                                                            print("Entrega Medium selecionada. Obrigado pela preferência!")
-                                                            animal.remove(animal[i])
-                                                            break
-
-                                                        elif transporte == 3:
-
-                                                            dinheiro -= fretes[2]
-
-                                                            print("Entrega Slow selecionada. Obrigado pela preferência!")
-                                                            animal.remove(animal[i])
-                                                            break
-
-                                                        else:
-
-                                                            print("Transportadora indisponível ou saldo insuficiente.")
-                                                            continue
-                                                        
-
-                                                elif dinheiro < valor_final:
-
-                                                    
-
-                                                    print("Saldo insuficiente.")
-
-                                            
-                                            else:
-                                                print("Forma de pagamento inválida.")
-                                    else:
-                                        print("Animal não encontrado!")
-                            else:
-                                break             
+                            voltar_inicio = input("""
+Deseja sair ou voltar para a aba de login?
+1 - Sair
+2 - Voltar para a aba de login
+""")
+
+                            if voltar_inicio == "1":
+                                print("Obrigado por acessar nosso site!")
+                                quit()
+                                break
                                 
 
+                            elif voltar_inicio == "2":   
+                                print("Olá, cliente! Bem-vindo ao site + Pecoaria.")
+                                print("-" * 50)
+                                print("--- ABA DE LOGIN ---")
+                                print("1 - Cadastrar")
+                                print("2 - Login")
+                                print("0 - Sair")
+                                print("-" * 50)
 
-                                            
-                
-                else:
+                                aba = input("Escolha uma opção para prosseguir: ")
 
-                    print("Escolha uma das opções acima.")
-                    continue 
+                                if aba == "1":
 
+                                    acessoUsuario(cliente,acesso)
 
+                                elif aba == "2":
+                                    while True:
+                                        print ( '-'*50)
+                                        print('Login do cliente:')
+                                        print('(0 para Sair)')
+                                        print ( '-'*50)
+                                        nome = input('Usuário: ')
+                                        if nome == "0":
+                                                print('Ok!')
+                                                break
+                                        else:
+                                            entrar(cliente,acesso)
 
+                                elif aba == "0":
+                                    print("Até mais!")
+                                    quit()
 
+                                else:
+                                    print("Digite uma das opções acima.")
+                                    continue
+                                dinheiro = 0
+                                while True:
+                                        
+                                        dinheiro = clienteC.inserirSaldo(dinheiro)               
+                                        animalOUproduto= input("Deseja comprar produto ou animal: ")
 
-
-
-
-
-
-
+                                        if animalOUproduto == "produto":
+                                            clienteC.produtoC(produto)
+                                        elif animalOUproduto == "animal":
+                                            clienteC.animalC(animal)
+                                        else:
+                                            break
+                                print(f"Saldo da conta: R$ {dinheiro}")                                              
+                            else:
+                                print("Escolha uma das opções acima.")
+                                continue 
 
     elif opcao == 2:
         while True:
