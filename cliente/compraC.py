@@ -1,6 +1,26 @@
-def inserirSaldo(dinheiro):
-    
-    print(f"Saldo da conta: R$ {dinheiro}")
+def salvarSALDO(usuario_logado):
+    with open ('logins.txt', 'r', encoding= 'utf -8')as arquivos:
+        linhas = arquivos.readlines()
+    with open ('logins.txt','a+' , encoding= 'utf-8')as arquivos:
+        for linha in linhas:
+            if linha.strip() == '':
+                continue
+            nome,senha,saldo = linha.strip().split(",")
+            if nome == usuario_logado:
+                
+                arquivos.write(f"{nome},{senha},{saldo}\n")
+
+
+def inserirSaldo(usuario_logado):
+    with open('logins.txt','r')as arquivos:
+        linhas = arquivos.readlines()
+        for linha in linhas:
+            if linha.strip() == '':
+                continue
+            nome,senha,saldo = linha.strip().split(",")
+            if nome == usuario_logado:
+                print(f"Saldo da conta: R$ ({saldo})")
+                break
 
     while True:
         numeros = "1234567890"
@@ -12,14 +32,28 @@ def inserirSaldo(dinheiro):
                 dinheiro_valido = False
         if dinheiro_valido and dinheiro1 != "":
             dinheiro1 = int(dinheiro1)
-            if dinheiro1 >=0:
-                dinheiro+= dinheiro1
-                print(f"Saldo atualizado com sucesso! Saldo atual: R$ {dinheiro}")
-                break
+            if dinheiro1 >= 0:
+
+                novas_linhas = []
+    
+                for linha in linhas:
+                    if linha.strip() == '':
+                        continue
+                    nome,senha,saldo = linha.strip().split(",")
+                    
+                    if nome == usuario_logado:
+                        saldo = int(saldo) + int(dinheiro1)
+                    novas_linhas.append(f'{nome},{senha},{saldo}\n')
+                with open ('logins.txt' ,'w')as arquivos:
+    
+                    arquivos.writelines(novas_linhas)
+
+                print(f"Saldo atualizado com sucesso! Saldo atual: R$ {saldo}")
+            break
         else:
             print("Saldo nao possivel de adicionar.Tente novamente")
-    return dinheiro
-def produtoC(produto):
+    return saldo
+def produtoC(produto,usuario_logado):
     
         print("Itens disponíveis:")
 
@@ -62,9 +96,20 @@ def produtoC(produto):
                         valor_final = valor_total - valor_desc
 
                         if dinheiro >= valor_final:
+                        
 
                             dinheiro -= valor_final
-
+                            with open ('logins.txt', 'r', encoding= 'utf -8')as arquivos:
+                                linhas = arquivos.readlines()
+                            with open ('logins.txt','w' , encoding= 'utf-8')as arquivos:
+                                for linha in linhas:
+                                    if linha.strip() == '':
+                                        continue
+                                    nome,senha,saldo = linha.strip().split(',')
+                                    if nome == usuario_logado:
+                                        saldo=dinheiro
+                                    arquivos.write(f"{nome},{senha},{saldo}\n")
+                                    return dinheiro
                             print(f"Sua compra foi realizada com sucesso! Valor final: R$ {valor_final}")
 
                             print(f"Produto adquirido: {produto_escolha[0]} | Quantidade: {quantidade}")
@@ -164,7 +209,17 @@ def produtoC(produto):
                     if dinheiro >= valor_final:
 
                         dinheiro -= valor_final
-
+                        with open ('logins.txt', 'r', encoding= 'utf -8')as arquivos:
+                            linhas = arquivos.readlines()
+                        with open ('logins.txt','w' , encoding= 'utf-8')as arquivos:
+                            for linha in linhas:
+                                if linha.strip() == '':
+                                    continue
+                                nome,senha,saldo = linha.strip().split(',')
+                                if nome == usuario_logado:
+                                    saldo=dinheiro
+                                arquivos.write(f"{nome},{senha},{saldo}\n")
+                                return dinheiro
                         print(f"Sua compra foi realizada com sucesso! Valor final: R$ {valor_final}")
 
                         print(f"Produto adquirido: {produto_escolha[0]} | Quantidade: {quantidade}")
@@ -222,7 +277,7 @@ def produtoC(produto):
         else:
             print("Forma de pagamento inválida.")
 
-def animalC(animal):
+def animalC(animal,usuario_logado):
     while True:
         achou=False
         for a in animal:
@@ -267,7 +322,17 @@ def animalC(animal):
                     if dinheiro >= valor_final:
 
                         dinheiro -= valor_final
-
+                        with open ('logins.txt', 'r', encoding= 'utf -8')as arquivos:
+                            linhas = arquivos.readlines()
+                        with open ('logins.txt','w' , encoding= 'utf-8')as arquivos:
+                            for linha in linhas:
+                                if linha.strip() == '':
+                                    continue
+                                nome,senha,saldo = linha.strip().split(',')
+                                if nome == usuario_logado:
+                                    saldo=dinheiro
+                                arquivos.write(f"{nome},{senha},{saldo}\n")
+                                return dinheiro
                         print(f"Sua compra foi realizada com sucesso! Valor final: R$ {valor_final}")
 
                         print(f"Produto adquirido:")
@@ -365,6 +430,18 @@ def animalC(animal):
                     if dinheiro >= valor_final:
 
                         dinheiro -= valor_final
+                        with open ('logins.txt', 'r', encoding= 'utf -8')as arquivos:
+                            linhas = arquivos.readlines()
+                        with open ('logins.txt','w' , encoding= 'utf-8')as arquivos:
+                            for linha in linhas:
+                                if linha.strip() == '':
+                                    continue
+                                nome,senha,saldo = linha.strip().split(',')
+                                if nome == usuario_logado:
+                                    saldo=dinheiro
+                                arquivos.write(f"{nome},{senha},{saldo}\n")
+                                return dinheiro
+                        
 
                         print(f"Sua compra foi realizada com sucesso! Valor final: R$ {valor_final}")
 

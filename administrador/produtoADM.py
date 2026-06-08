@@ -1,3 +1,4 @@
+import completo
 def interfaceADMinicio():
         print('-'*50)
         print('Aba do administrador')
@@ -40,6 +41,7 @@ def opcao2(produto,animal):
         print ( '-'*50)
 
 def opcao3(produto,animal,achou):
+    achou = False
     for p in produto:
         print ( f'Nome: {p[0]}\n Valor : R${p[1]}\n Em Estoque: {p[2]}')
         print ( '-'*50)
@@ -51,11 +53,16 @@ def opcao3(produto,animal,achou):
     
     for p in range ( len ( produto )  ) :
         if produto[p][0] == pesquisa:
+            produto.pop(p)
             achou = True
     for a in range ( len ( animal )  ) :
         if animal[a][2] == pesquisa:
+            animal.pop(a)
             achou = True
-            return achou
+    if achou:
+        completo.cadastrarProduto()
+        
+
             
 
 def opcao4(produto,animal):

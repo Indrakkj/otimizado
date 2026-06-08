@@ -2,7 +2,9 @@ import administrador.producaoADM as producaoADM
 import administrador.produtoADM as produtoADM
 import administrador.estoqueADM as estoqueADM
 import cliente.compraC as clienteC
+import cliente.loginC as loginCLIENTE
 administrador = [['henrique','henrique114'],['pedro','pedro2245']]
+
 produto = []
 nome_p = ''
 animal = []
@@ -37,36 +39,13 @@ def acessoUsuario(escolhaADMouC,acesso):
                 print("Senha inválida.")
 
             else:
+                saldo = 0
                 with open ('logins.txt' , 'a' , encoding= 'utf-8') as escolhaADMouC:
-                    escolhaADMouC.write(f'{nome}, {senha} \n')
+                    escolhaADMouC.write(f'{nome},{senha},{saldo}\n')
                     print("Cadastro concluído com sucesso!")
+                    escolhaADMouC.close
                     acesso = True
                     return acesso 
-
-def entrar(escolhaADMouC,acesso):
-        while True:
-            print ( '-'*50)
-            print('Login do administrador:')
-            print('(0 para Sair)')
-            print ( '-'*50)
-            nome = input('Usuário: ')
-            if nome == "0":
-                    print('Ok!')
-                    break
-            else:
-                print ( '-'*50)
-                senha = input('Senha: ')
-                acesso = False
-                print ( '-'*50)
-                with open ('logins.txt' , 'r' , encoding= 'utf-8') as arquivo:
-                    for i in arquivo:
-                        if nome == i[0] and senha == i[1]:
-                            acesso = True
-                            return acesso
-                        
-                if not acesso:
-                    print('Senha ou usuário inválido!')
-                return acesso
 
 def cadastrarProduto():
     nome_p = input ( "Qual o nome do produto? " ) .upper ( )
@@ -109,12 +88,7 @@ def cadastrarProduto():
             print ( f'Valor: R${valor}')
             print ( f'Em estoque:{estoque}')
             print ( '-'*50)
-            print ( 'Produto atualizado!')
-            produto.pop(p)
-            animal.pop(a)
-            
-    else:
-        print('Produto não encontrado')
+        
 
 def cadastrarProducao(produto_p):
         
@@ -263,6 +237,7 @@ while True:
     print('-'*50)
     opcao = int(input("Qual opção você quer? "))
     if opcao == 1:
+        usuario_logado = None
         while True:
             print("Olá, cliente! Bem-vindo ao site + Pecoaria.")
             print("-" * 50)
@@ -279,17 +254,7 @@ while True:
                 acessoUsuario(cliente,acesso)
 
             elif aba == "2":
-                while True:
-                    print ( '-'*50)
-                    print('Login do cliente:')
-                    print('(0 para Sair)')
-                    print ( '-'*50)
-                    nome = input('Usuário: ')
-                    if nome == "0":
-                            print('Ok!')
-                            break
-                    else:
-                        entrar(cliente,acesso)
+                usuario_logado=loginCLIENTE.loginUSUARIO()
 
             elif aba == "0":
                 print("Até mais!")
@@ -299,88 +264,81 @@ while True:
                 print("Digite uma das opções acima.")
                 continue
             dinheiro = 0
-            while True:
-                    voltar_comprar = input("Deseja ir para a aba de compras? ").lower()   
-                    if voltar_comprar == "sim":
-                        dinheiro = clienteC.inserirSaldo(dinheiro)               
-                        animalOUproduto= input("Deseja comprar produto ou animal: ")
+            if usuario_logado or aba == "1":
+                
+                while True:
+                        voltar_comprar = input("Deseja ir para a aba de compras? ").lower()   
+                        if voltar_comprar == "sim":
+                            dinheiro = clienteC.inserirSaldo(usuario_logado)               
+                            animalOUproduto= input("Deseja comprar produto ou animal: ")
 
-                        if animalOUproduto == "produto":
-                            clienteC.produtoC(produto)
-                        elif animalOUproduto == "animal":
-                            clienteC.animalC(animal)
-                            
+                            if animalOUproduto == "produto":
+                                clienteC.produtoC(produto,usuario_logado)
+                            elif animalOUproduto == "animal":
+                                clienteC.animalC(animal,usuario_logado)
+                                
+                            else:
+                                print('Opção inválida!')
+                                break
+                        
+                            print(f"Saldo da conta: R$ {dinheiro}")
                         else:
-                            print('Opção inválida!')
-                            break
-                    
-                        print(f"Saldo da conta: R$ {dinheiro}")
-                    else:
-                        while True:
+                            while True:
 
-                            voltar_inicio = input("""
+                                voltar_inicio = input("""
 Deseja sair ou voltar para a aba de login?
 1 - Sair
 2 - Voltar para a aba de login
 """)
 
-                            if voltar_inicio == "1":
-                                print("Obrigado por acessar nosso site!")
-                                quit()
-                                break
-                                
-
-                            elif voltar_inicio == "2":   
-                                print("Olá, cliente! Bem-vindo ao site + Pecoaria.")
-                                print("-" * 50)
-                                print("--- ABA DE LOGIN ---")
-                                print("1 - Cadastrar")
-                                print("2 - Login")
-                                print("0 - Sair")
-                                print("-" * 50)
-
-                                aba = input("Escolha uma opção para prosseguir: ")
-
-                                if aba == "1":
-
-                                    acessoUsuario(cliente,acesso)
-
-                                elif aba == "2":
-                                    while True:
-                                        print ( '-'*50)
-                                        print('Login do cliente:')
-                                        print('(0 para Sair)')
-                                        print ( '-'*50)
-                                        nome = input('Usuário: ')
-                                        if nome == "0":
-                                                print('Ok!')
-                                                break
-                                        else:
-                                            entrar(cliente,acesso)
-
-                                elif aba == "0":
-                                    print("Até mais!")
+                                if voltar_inicio == "1":
+                                    print("Obrigado por acessar nosso site!")
                                     quit()
+                                    break
+                                    
 
+                                elif voltar_inicio == "2":   
+                                    print("Olá, cliente! Bem-vindo ao site + Pecoaria.")
+                                    print("-" * 50)
+                                    print("--- ABA DE LOGIN ---")
+                                    print("1 - Cadastrar")
+                                    print("2 - Login")
+                                    print("0 - Sair")
+                                    print("-" * 50)
+
+                                    aba = input("Escolha uma opção para prosseguir: ")
+
+                                    if aba == "1":
+
+                                        acessoUsuario(cliente,acesso)
+
+                                    elif aba == "2":
+                                        loginCLIENTE.loginUSUARIO()
+                                    
+
+                                    elif aba == "0":
+                                        print("Até mais!")
+                                        quit()
+
+                                    else:
+                                        print("Digite uma das opções acima.")
+                                        continue
+                                    dinheiro = 0
+                                    while True:
+                                            
+                                            dinheiro = clienteC.inserirSaldo(dinheiro)               
+                                            animalOUproduto= input("Deseja comprar produto ou animal: ")
+
+                                            if animalOUproduto == "produto":
+                                                clienteC.produtoC(produto)
+                                            elif animalOUproduto == "animal":
+                                                clienteC.animalC(animal)
+                                            else:
+                                                break
+                                    print(f"Saldo da conta: R$ {dinheiro}")                                              
                                 else:
-                                    print("Digite uma das opções acima.")
-                                    continue
-                                dinheiro = 0
-                                while True:
-                                        
-                                        dinheiro = clienteC.inserirSaldo(dinheiro)               
-                                        animalOUproduto= input("Deseja comprar produto ou animal: ")
-
-                                        if animalOUproduto == "produto":
-                                            clienteC.produtoC(produto)
-                                        elif animalOUproduto == "animal":
-                                            clienteC.animalC(animal)
-                                        else:
-                                            break
-                                print(f"Saldo da conta: R$ {dinheiro}")                                              
-                            else:
-                                print("Escolha uma das opções acima.")
-                                continue 
+                                    print("Escolha uma das opções acima.")
+                                    continue 
 
     elif opcao == 2:
         while True:
@@ -392,12 +350,12 @@ Deseja sair ou voltar para a aba de login?
             elif opcao == 2:
                 
                     # acesso = True
-                if entrar(administrador,acesso):
-                    acesso = False
-                    print ( '-'*50)
-                    print ( 'Olá administrador!')
-                    print ( '-'*50)
-                    while True:
+                adm_logado = loginCLIENTE.loginUSUARIO()
+                acesso = False
+                print ( '-'*50)
+                print ( 'Olá administrador!')
+                print ( '-'*50)
+                while True:
                             
                             print ( 'Essas são as opções:')
                             print ( '-'*50)
@@ -431,7 +389,7 @@ Deseja sair ou voltar para a aba de login?
                                         produtoADM.opcao2(produto,animal)
                                     
                                     elif opcao == 3:
-                                        produtoADM.opcao3(produto,animal)
+                                        produtoADM.opcao3(produto,animal,achou)
                                         if achou:
                                             cadastrarProduto()
                                             
