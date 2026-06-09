@@ -3,8 +3,9 @@ import administrador.produtoADM as produtoADM
 import administrador.estoqueADM as estoqueADM
 import cliente.compraC as clienteC
 import cliente.loginC as loginCLIENTE
+import truques.input as inputt
 administrador = [['henrique','henrique114'],['pedro','pedro2245']]
-
+material = {}
 produto = []
 nome_p = ''
 animal = []
@@ -47,186 +48,9 @@ def acessoUsuario(escolhaADMouC,acesso):
                     acesso = True
                     return acesso 
 
-def cadastrarProduto():
-    nome_p = input ( "Qual o nome do produto? " ) .upper ( )
-    pergunta_a = input ( 'Seu produto é um animal? ' ) .lower ( )
 
-    if pergunta_a == 'sim':
-        pergunta_a == 'não'
-        tipo_a = input ( 'Qual o tipo do animal (bovino, caprino, suino, etc.)? ' ) .upper ( )
-        identificacao_a = input ( 'Qual a identificação (brinco, marcação,etc.)? (Não coloque a indetificação igual a de outro animal!) ' ) .upper ( )
-        achou = False
-        for i in range ( len ( animal )  ) :
-            if animal[i][2] == identificacao_a:
-                print ( 'Animal já registrado!')
-                print ( 'Apague o animal registrado ou use outra identificação!')
-                achou = True
-                break
-        if not achou:
-                
-                peso_a = float ( input ( 'Qual é o peso do seu animal em quilogramas? ' ) )
-                valor_a = float ( input ( 'Qual o valor por quilo em R$? ' ) )
-                valorTotal = valor_a * peso_a
-                animal.append ( [nome_p,tipo_a,identificacao_a,peso_a,valorTotal])
-                
-                print ( f'Animal: {nome_p}')
-                print ( f'Tipo: {tipo_a}')
-                print ( f'Indentificação: {identificacao_a}')
-                print ( f'Peso: {peso_a}')
-                print ( f'Valor: R$ {valorTotal}')
-        else:
-            achou = False 
-            
-    
-    elif pergunta_a != 'sim':
-            valor = float ( input ( "Qual o valor do produto em R$? " ) )
-            estoque = float ( input ( "Qual a quantia do estoque do produto? " ) )
-            produto.append ( [nome_p,valor,estoque])
-
-            print ( '-'*50)
-            print ( f'Produto:{nome_p}') 
-            print ( f'Valor: R${valor}')
-            print ( f'Em estoque:{estoque}')
-            print ( '-'*50)
         
 
-def cadastrarProducao(produto_p):
-        
-    for p in range ( len ( m_primas )  ) :
-        if m_primas[p][0] == item:
-            achou = True
-            break
-            
-    if achou:    
-        c = float(input(f'Qual a quantidade de {item} para fazer 1 {produto_p}? '))
-        pr = float(input(f'Qual a quantidade de {produto_p} você quer fazer? ')) 
-        calculo =  c * pr
-        achou = False
-        
-        if calculo > m_primas[p][1]:
-            print(f'Quantidade de {item} insuficiente!')
-            print(f'Adicione mais {item}, ou diminua a produção de {produto_p}!')
-        else:
-            subtracao = m_primas[p][1] - calculo
-            print('-'*50)
-            print(f'Produto: {produto_p}\n Quantidade:{pr}\n Item necessário: {item}\n Quantidade de {item}: {m_primas[p][1]}\n Você usou {calculo} de {item} para fazer {pr} {produto_p}\n Você agora tem {subtracao} {item}\n')
-            print('-'*50)
-            m_primas[p] = [item,subtracao,c,produto_p]
-            p_producao.append([produto_p,pr])
-            ver_p.append(f'Produto: {produto_p} --- Item: {item} --- Estoque de {item}: {subtracao}')
-            pergunta = input('Quer colocar outro item (sim ou não)? ').lower
-            
-        while pergunta == 'sim':
-            item = input('Qual é o outro item para produção (leite, sal, açucar, etc.)? ').upper()
-            for i in range ( len ( m_primas )  ) :
-                print(m_primas[i][0])
-                if m_primas[i][0] == item:
-                    achou2 = True
-                    break
-                    
-            if achou2:
-                c = int(input(f'Qual a quantidade de {item} para fazer 1 {produto_p}? '))
-                    
-                calculo =  c * pr
-                achou2 = False
-
-                if calculo > m_primas[i][1]:
-                    print(f'Quantidade de {item} insuficiente!')
-                    print(f'Adicione mais {item}, ou diminua a produção de {produto_p}!')
-                    
-
-
-                else:
-                    subtracao = m_primas[i][1] - calculo
-                    print('-'*50)
-                    print(f'Outro Item: {item}\n Quantidade de {item}: {m_primas[i][1]}\n Você usou {calculo} de {item} para fazer {pr} {produto_p}\n Você agora tem {subtracao} {item}\n')
-                    print('-'*50)
-                    m_primas.append([item,subtracao,c,produto_p])
-                    ver_p.append(f'Outro item: {item} --- Estoque de {item}: {subtracao}')
-                    pergunta = input('Quer colocar outro item (sim ou não)? ')
-
-            else:
-                p_item = float(input(f'Qual a quantidade de {item} você tem em seu estoque? '))
-                c = float(input(f'Qual a quantidade de {item} para fazer 1 {produto_p}? '))
-                pr = float(input(f'Qual a quantidade de {produto_p} você quer fazer? ')) 
-                calculo =  c * pr
-
-                if calculo > p_item:
-                    print(f'Quantidade de {item} insuficiente!')
-                    print(f'Adicione mais {item}, ou diminua a produção de {produto_p}!')
-                else:
-                    subtracao = p_item - calculo
-                    print('-'*50)
-                    print(f'Outro item: {item}\n Quantidade de {item}: {p_item}\n Você usou {calculo} de {item} para fazer {p} {produto_p}\n Você agora tem {subtracao} {item}\n')
-                    print('-'*50)
-                    p_producao.append([produto_p,pr])
-                    m_primas.append([item,subtracao,c,produto_p])
-                    ver_p.append(f'Outro item: {item} --- Estoque de {item}: {subtracao}')
-                    pergunta = input('Quer colocar outro item (sim ou não)? ')
-                    
-    else:
-        p_item = float(input(f'Qual a quantidade de {item} você tem em seu estoque? '))
-        c = float(input(f'Qual a quantidade de {item} para fazer 1 {produto_p}? '))
-        pr = float(input(f'Qual a quantidade de {produto_p} você quer fazer? ')) 
-        calculo =  c * pr
-
-        if calculo > p_item:
-            print(f'Quantidade de {item} insuficiente!')
-            print(f'Adicione mais {item}, ou diminua a produção de {produto_p}!')
-        else:
-            subtracao = p_item - calculo
-            print('-'*50)
-            print(f'Outro item: {item}\n Quantidade de {item}: {p_item}\n Você usou {calculo} de {item} para fazer {p} {produto_p}\n Você agora tem {subtracao} {item}\n')
-            print('-'*50)
-            p_producao.append([produto_p,pr])
-            m_primas.append([item,subtracao,c,produto_p])
-            ver_p.append(f'Outro item: {item} --- Estoque de {item}: {subtracao}')
-            pergunta = input('Quer colocar outro item (sim ou não)? ')
-    while pergunta == 'sim':
-            item = input('Qual é o outro item para produção (leite, sal, açucar, etc.)? ').upper()
-            for i in range ( len ( m_primas )  ) :
-                if m_primas[i][0] == item:
-                    achou2 = True
-                    break 
-
-            if achou2:
-                c = int(input(f'Qual a quantidade de {item} para fazer 1 {produto_p}? '))
-                    
-                calculo =  c * pr
-                achou2 = False
-
-                if calculo > m_primas[i][1]:
-                    print(f'Quantidade de {item} insuficiente!')
-                    print(f'Adicione mais {item}, ou diminua a produção de {produto_p}!')
-                    
-
-
-                else:
-                    subtracao = m_primas[i][1] - calculo
-                    print('-'*50)
-                    print(f'Outro Item: {item}\n Quantidade de {item}: {m_primas[i][1]}\n Você usou {calculo} de {item} para fazer {pr} {produto_p}\n Você agora tem {subtracao} {item}\n')
-                    print('-'*50)
-                    m_primas.append([item,subtracao,c,produto_p])
-                    ver_p.append(f'Outro item: {item} --- Estoque de {item}: {subtracao}')
-                    pergunta = input('Quer colocar outro item (sim ou não)? ')
-
-            else:
-                p_item = float(input(f'Qual a quantidade de {item} você tem em seu estoque? '))
-                c = float(input(f'Qual a quantidade de {item} para fazer 1 {produto_p}? '))
-                pr = float(input(f'Qual a quantidade de {produto_p} você quer fazer? ')) 
-                calculo =  c * pr
-
-                if calculo > p_item:
-                    print(f'Quantidade de {item} insuficiente!')
-                    print(f'Adicione mais {item}, ou diminua a produção de {produto_p}!')
-                else:
-                    subtracao = p_item - calculo
-                    print('-'*50)
-                    print(f'Outro item: {item}\n Quantidade de {item}: {p_item}\n Você usou {calculo} de {item} para fazer {p} {produto_p}\n Você agora tem {subtracao} {item}\n')
-                    print('-'*50)
-                    m_primas.append([item,subtracao,c,produto_p])
-                    ver_p.append(f'Outro item: {item} --- Estoque de {item}: {subtracao}')
-                    pergunta = input('Quer colocar outro item (sim ou não)? ')
 
 while True:
     print('Bem vindo ao sistema Mais Pecuárea!')
@@ -235,7 +59,7 @@ while True:
     print('1 Cliente')
     print('2 Administrador')
     print('-'*50)
-    opcao = int(input("Qual opção você quer? "))
+    opcao = inputt.inputNumeroInt("Qual opção você quer? ")
     if opcao == 1:
         usuario_logado = None
         while True:
@@ -343,7 +167,7 @@ Deseja sair ou voltar para a aba de login?
     elif opcao == 2:
         while True:
             produtoADM.interfaceADMinicio()
-            opcao = int(input("Qual opção você quer? "))
+            opcao = inputt.inputNumeroInt("Qual opção você quer? ")
 
             if opcao == 1:
                acessoUsuario(administrador,acesso)
@@ -364,7 +188,7 @@ Deseja sair ou voltar para a aba de login?
                             print ( '3 Estoque')
                             print ( '0 Sair')
                             print ( '-'*50)
-                            opcao = int ( input ( 'Qual opção você quer? ' ) )
+                            opcao = inputt.inputNumeroInt( 'Qual opção você quer? ' )
                             
                             
                             if opcao == 0:
@@ -381,9 +205,9 @@ Deseja sair ou voltar para a aba de login?
                                     print ( '4 Remover produto')
                                     print ( '0 Sair')
                                     print ( '-'*50)
-                                    opcao = int ( input ( 'Qual opção você quer? ' ) )
+                                    opcao = inputt.inputNumeroInt( 'Qual opção você quer? ' )
                                     if opcao == 1:
-                                        cadastrarProduto()
+                                        produtoADM.cadastrarProduto(animal,produto)
                                     
                                     elif opcao == 2:
                                         produtoADM.opcao2(produto,animal)
@@ -391,7 +215,7 @@ Deseja sair ou voltar para a aba de login?
                                     elif opcao == 3:
                                         produtoADM.opcao3(produto,animal,achou)
                                         if achou:
-                                            cadastrarProduto()
+                                            produtoADM.cadastrarProduto(animal,produto)
                                             
 
                                     elif opcao == 4:
@@ -414,17 +238,17 @@ Deseja sair ou voltar para a aba de login?
                                     print ( '5 Produzir')
                                     print ( '0 Sair')
                                     print ( '-'*50)
-                                    opcao = int ( input ( 'Qual opção você quer? ' ) )
+                                    opcao = inputt.inputNumeroInt( 'Qual opção você quer? ' ) 
                                     if opcao == 1:
-                                        producaoADM.opcao1Producao(p_producao,m_primas,ver_p)
+                                        producaoADM.opcao1Producao(p_producao,m_primas,ver_p,material)
                                     elif opcao == 2:
                                         producaoADM.opcao2Verproducao(p_producao)
                                     elif opcao == 3:
-                                        producaoADM.opcao3Editarproduca(p_producao)  
+                                        producaoADM.opcao3Editarproducao(p_producao,material)  
                                     elif opcao == 4:
-                                       producaoADM.opcao4Removerproducao(p_producao)         
+                                       producaoADM.opcao4Removerproducao(p_producao,material)         
                                     elif opcao == 5:
-                                        producaoADM.opcao5Produzir(p_producao,m_primas)
+                                        producaoADM.opcao5Produzir(p_producao,material)
     
                                     elif opcao == 0:
                                         print('Ok!')
@@ -443,7 +267,7 @@ Deseja sair ou voltar para a aba de login?
                                     print ( '3 Remover do estoque')
                                     print ( '0 Sair')
                                     print ( '-'*50)
-                                    opcao = int ( input ( 'Qual opção você quer? ' ) )
+                                    opcao = inputt.inputNumeroInt( 'Qual opção você quer? ' )
                                     if opcao == 1:
                                         estoqueADM.opcao1Verestoque(m_primas)
                                     elif opcao == 2:

@@ -1,4 +1,45 @@
-import completo
+import truques.input as inputt
+def cadastrarProduto(animal,produto):
+    nome_p = input ( "Qual o nome do produto? " ) .upper ( )
+    pergunta_a = input ( 'Seu produto é um animal? ' ) .lower ( )
+
+    if pergunta_a == 'sim':
+        pergunta_a == 'não'
+        tipo_a = input ( 'Qual o tipo do animal (bovino, caprino, suino, etc.)? ' ) .upper ( )
+        identificacao_a = input ( 'Qual a identificação (brinco, marcação,etc.)? (Não coloque a indetificação igual a de outro animal!) ' ) .upper ( )
+        achou = False
+        for i in range ( len ( animal )  ) :
+            if animal[i][2] == identificacao_a:
+                print ( 'Animal já registrado!')
+                print ( 'Apague o animal registrado ou use outra identificação!')
+                achou = True
+                break
+        if not achou:
+                
+                peso_a = inputt.inputNumeroInt( 'Qual é o peso do seu animal em quilogramas? ' ) 
+                valor_a = inputt.inputNumeroInt( 'Qual o valor por quilo em R$? ' ) 
+                valorTotal = valor_a * peso_a
+                animal.append ( [nome_p,tipo_a,identificacao_a,peso_a,valorTotal])
+                
+                print ( f'Animal: {nome_p}')
+                print ( f'Tipo: {tipo_a}')
+                print ( f'Indentificação: {identificacao_a}')
+                print ( f'Peso: {peso_a}')
+                print ( f'Valor: R$ {valorTotal}')
+        else:
+            achou = False 
+            
+    
+    elif pergunta_a != 'sim':
+            valor = inputt.inputNumeroInt( "Qual o valor do produto em R$? " )
+            estoque = inputt.inputNumeroInt( "Qual a quantia do estoque do produto? " )
+            produto.append ( [nome_p,valor,estoque])
+
+            print ( '-'*50)
+            print ( f'Produto:{nome_p}') 
+            print ( f'Valor: R${valor}')
+            print ( f'Em estoque:{estoque}')
+            print ( '-'*50)
 def interfaceADMinicio():
         print('-'*50)
         print('Aba do administrador')
@@ -60,7 +101,7 @@ def opcao3(produto,animal,achou):
             animal.pop(a)
             achou = True
     if achou:
-        completo.cadastrarProduto()
+        cadastrarProduto(animal,produto)
         
 
             
