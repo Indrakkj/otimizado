@@ -4,6 +4,8 @@ import administrador.estoqueADM as estoqueADM
 import cliente.compraC as clienteC
 import cliente.loginC as loginCLIENTE
 import truques.input as inputt
+import requests
+import truques.transport_clima as clima
 administrador = [['henrique','henrique114'],['pedro','pedro2245']]
 material = {}
 produto = []
@@ -18,7 +20,7 @@ encontrado = False
 acesso = False
 achou = False
 
-def acessoUsuario(escolhaADMouC,acesso):
+def acessoUsuario(escolhaADMouC):
     while True:
 
         nome = input("Digite um nome de usuário válido: ")
@@ -46,7 +48,8 @@ def acessoUsuario(escolhaADMouC,acesso):
                     print("Cadastro concluído com sucesso!")
                     escolhaADMouC.close
                     acesso = True
-                    return acesso 
+                    usuario_logado = nome
+                    return usuario_logado
 
 
         
@@ -61,7 +64,7 @@ while True:
     print('-'*50)
     opcao = inputt.inputNumeroInt("Qual opção você quer? ")
     if opcao == 1:
-        usuario_logado = None
+        usuario_logado = ''
         while True:
             print("Olá, cliente! Bem-vindo ao site + Pecoaria.")
             print("-" * 50)
@@ -75,8 +78,8 @@ while True:
 
             if aba == "1":
 
-                acessoUsuario(cliente,acesso)
-
+               usuario_logado= acessoUsuario(cliente)
+               
             elif aba == "2":
                 usuario_logado=loginCLIENTE.loginUSUARIO()
 
@@ -87,25 +90,26 @@ while True:
             else:
                 print("Digite uma das opções acima.")
                 continue
-            dinheiro = 0
+            saldo = 0
             if usuario_logado or aba == "1":
                 
                 while True:
                         voltar_comprar = input("Deseja ir para a aba de compras? ").lower()   
                         if voltar_comprar == "sim":
-                            dinheiro = clienteC.inserirSaldo(usuario_logado)               
+                            saldo = clienteC.inserirSaldo(usuario_logado,saldo)               
                             animalOUproduto= input("Deseja comprar produto ou animal: ")
-
+                            
                             if animalOUproduto == "produto":
-                                clienteC.produtoC(produto,usuario_logado)
+                               saldo=clienteC.produtoC(produto,usuario_logado,saldo)
+                               break
                             elif animalOUproduto == "animal":
                                 clienteC.animalC(animal,usuario_logado)
-                                
+                                break
                             else:
                                 print('Opção inválida!')
                                 break
                         
-                            print(f"Saldo da conta: R$ {dinheiro}")
+                            print(f"Saldo da conta: R$ {saldo}")
                         else:
                             while True:
 
@@ -147,10 +151,10 @@ Deseja sair ou voltar para a aba de login?
                                     else:
                                         print("Digite uma das opções acima.")
                                         continue
-                                    dinheiro = 0
+                                    saldo = 0
                                     while True:
                                             
-                                            dinheiro = clienteC.inserirSaldo(dinheiro)               
+                                            saldo = clienteC.inserirSaldo(usuario_logado,saldo)               
                                             animalOUproduto= input("Deseja comprar produto ou animal: ")
 
                                             if animalOUproduto == "produto":
@@ -159,7 +163,7 @@ Deseja sair ou voltar para a aba de login?
                                                 clienteC.animalC(animal)
                                             else:
                                                 break
-                                    print(f"Saldo da conta: R$ {dinheiro}")                                              
+                                    print(f"Saldo da conta: R$ {saldo}")                                              
                                 else:
                                     print("Escolha uma das opções acima.")
                                     continue 
@@ -170,7 +174,7 @@ Deseja sair ou voltar para a aba de login?
             opcao = inputt.inputNumeroInt("Qual opção você quer? ")
 
             if opcao == 1:
-               acessoUsuario(administrador,acesso)
+               acessoUsuario(administrador)
             elif opcao == 2:
                 
                     # acesso = True

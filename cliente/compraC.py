@@ -1,3 +1,6 @@
+import requests
+import truques.transport_clima as clima
+import truques.input as inputt
 def salvarSALDO(usuario_logado):
     with open ('logins.txt', 'r', encoding= 'utf -8')as arquivos:
         linhas = arquivos.readlines()
@@ -9,9 +12,9 @@ def salvarSALDO(usuario_logado):
             if nome == usuario_logado:
                 
                 arquivos.write(f"{nome},{senha},{saldo}\n")
+                
 
-
-def inserirSaldo(usuario_logado):
+def inserirSaldo(usuario_logado,saldo):
     with open('logins.txt','r')as arquivos:
         linhas = arquivos.readlines()
         for linha in linhas:
@@ -23,37 +26,34 @@ def inserirSaldo(usuario_logado):
                 break
 
     while True:
-        numeros = "1234567890"
-        dinheiro_valido = True
-        dinheiro1 = input("Quanto de saldo deseja por na sua conta? ")
         
-        for d in dinheiro1:
-            if d not in numeros:
-                dinheiro_valido = False
-        if dinheiro_valido and dinheiro1 != "":
-            dinheiro1 = int(dinheiro1)
-            if dinheiro1 >= 0:
+        saldo1 = inputt.inputNumeroInt("Quanto de saldo deseja por na sua conta? ")
+        
+       
 
-                novas_linhas = []
-    
-                for linha in linhas:
-                    if linha.strip() == '':
-                        continue
-                    nome,senha,saldo = linha.strip().split(",")
+        novas_linhas = []
+
+        for linha in linhas:
+            if linha.strip() == '':
+                continue
+            nome,senha,saldo = linha.strip().split(",")
                     
-                    if nome == usuario_logado:
-                        saldo = int(saldo) + int(dinheiro1)
-                    novas_linhas.append(f'{nome},{senha},{saldo}\n')
-                with open ('logins.txt' ,'w')as arquivos:
-    
-                    arquivos.writelines(novas_linhas)
+        if nome == usuario_logado:
+            saldo = saldo1 + int(saldo)
+            novas_linhas.append(f'{nome},{senha},{saldo}\n')
+            with open ('logins.txt' ,'r')as arquivos:
+                for linha in arquivos:
+                    if linha == nome:
+                        with open ('logins.txt' ,'w')as arquivos:
 
-                print(f"Saldo atualizado com sucesso! Saldo atual: R$ {saldo}")
-            break
+                            arquivos.write(novas_linhas)
+
+            print(f"Saldo atualizado com sucesso! Saldo atual: R$ {saldo}")
+
         else:
             print("Saldo nao possivel de adicionar.Tente novamente")
-    return saldo
-def produtoC(produto,usuario_logado):
+        return saldo
+def produtoC(produto,usuario_logado,saldo):
     
         print("Itens disponíveis:")
 
@@ -94,11 +94,12 @@ def produtoC(produto,usuario_logado):
                         valor_total = preco * quantidade
                         valor_desc = valor_total * desconto
                         valor_final = valor_total - valor_desc
-
-                        if dinheiro >= valor_final:
+                        valor_final = int(valor_final)
+                        saldo = float(saldo)
+                        if saldo >= valor_final:
                         
 
-                            dinheiro -= valor_final
+                            saldo -= valor_final
                             with open ('logins.txt', 'r', encoding= 'utf -8')as arquivos:
                                 linhas = arquivos.readlines()
                             with open ('logins.txt','w' , encoding= 'utf-8')as arquivos:
@@ -107,41 +108,58 @@ def produtoC(produto,usuario_logado):
                                         continue
                                     nome,senha,saldo = linha.strip().split(',')
                                     if nome == usuario_logado:
-                                        saldo=dinheiro
+                                        saldo=saldo
                                     arquivos.write(f"{nome},{senha},{saldo}\n")
-                                    return dinheiro
+                                    return saldo
                             print(f"Sua compra foi realizada com sucesso! Valor final: R$ {valor_final}")
 
                             print(f"Produto adquirido: {produto_escolha[0]} | Quantidade: {quantidade}")
 
                             fretes = [89.90, 19.99, 0]
-
+                            fast=8
+                            medium=16
+                            slow=30
                             print("Escolha a opção de entrega desejada:")
-                            print("1 - Fast: entrega em até 8 dias | frete: R$ 89,90")
-                            print("2 - Medium: entrega em até 16 dias | frete: R$ 19,99")
-                            print("3 - Slow: entrega em até 30 dias | frete grátis")
-
+                            print(f"1 - Fast: entrega em até {fast} dias | frete: R$ 89,90")
+                            print(f"2 - Medium: entrega em até {medium} dias | frete: R$ 19,99")
+                            print(f"3 - Slow: entrega em até {slow} dias | frete grátis")
+                            
+                            temperatura = clima.climatizacao()
+                            
                             while True:
 
-                                transporte = int(input("Escolha sua transportadora: "))
+                                transporte = inputt.inputNumeroInt("Escolha sua transportadora: ")
+                                
+                                if transporte == 1 and temperatura > 29:
+                                    fast += 3
+                                    print(f'Devido as altas temperaturas ({temperatura}C°), sua entrega chegará em {fast}dias.')
+                                    break
+                                elif transporte == 2 and temperatura > 29:
+                                    medium += 3
+                                    print(f'Devido as altas temperaturas ({temperatura}C°), sua entrega chegará em {medium}dias.')
+                                    break
+                                elif transporte == 3 and temperatura > 29:
+                                    slow += 3
+                                    print(f'Devido as altas temperaturas ({temperatura}C°), sua entrega chegará em {slow}dias.')
+                                    break
+                                    
+                                if transporte == 1 and saldo >= 89.90:
 
-                                if transporte == 1 and dinheiro >= 89.90:
-
-                                    dinheiro -= fretes[0]
+                                    saldo -= fretes[0]
 
                                     print("Entrega Fast selecionada. Obrigado pela preferência!")
                                     break
 
-                                elif transporte == 2 and dinheiro >= 19.99:
+                                elif transporte == 2 and saldo >= 19.99:
 
-                                    dinheiro -= fretes[1]
+                                    saldo -= fretes[1]
 
                                     print("Entrega Medium selecionada. Obrigado pela preferência!")
                                     break
 
                                 elif transporte == 3:
 
-                                    dinheiro -= fretes[2]
+                                    saldo -= fretes[2]
 
                                     print("Entrega Slow selecionada. Obrigado pela preferência!")
                                     break
@@ -151,7 +169,7 @@ def produtoC(produto,usuario_logado):
                                     print("Transportadora indisponível ou saldo insuficiente.")
                                     break
 
-                        elif dinheiro < valor_final:
+                        elif saldo < valor_final:
 
                             p[2] += quantidade
 
@@ -206,9 +224,9 @@ def produtoC(produto,usuario_logado):
                     valor_desc = valor_total * desconto
                     valor_final = valor_total - valor_desc
 
-                    if dinheiro >= valor_final:
+                    if saldo >= valor_final:
 
-                        dinheiro -= valor_final
+                        saldo -= valor_final
                         with open ('logins.txt', 'r', encoding= 'utf -8')as arquivos:
                             linhas = arquivos.readlines()
                         with open ('logins.txt','w' , encoding= 'utf-8')as arquivos:
@@ -217,45 +235,47 @@ def produtoC(produto,usuario_logado):
                                     continue
                                 nome,senha,saldo = linha.strip().split(',')
                                 if nome == usuario_logado:
-                                    saldo=dinheiro
+                                    saldo=saldo
                                 arquivos.write(f"{nome},{senha},{saldo}\n")
-                                return dinheiro
+                                return saldo
                         print(f"Sua compra foi realizada com sucesso! Valor final: R$ {valor_final}")
 
                         print(f"Produto adquirido: {produto_escolha[0]} | Quantidade: {quantidade}")
 
-                        print(f"Saldo atual da conta: R$ {dinheiro}")
+                        print(f"Saldo atual da conta: R$ {saldo}")
+
+                       
 
                         fretes = [89.90, 19.99, 0]
-
+                        fast=8
+                        medium=16
+                        slow=30
                         print("Escolha a opção de entrega desejada:")
-                        print("1 - Fast: entrega em até 8 dias | frete: R$ 89,90")
-                        print("2 - Medium: entrega em até 16 dias | frete: R$ 19,99")
-                        print("3 - Slow: entrega em até 30 dias | frete grátis")
+                        print(f"1 - Fast: entrega em até {fast} dias | frete: R$ 89,90")
+                        print(f"2 - Medium: entrega em até {medium} dias | frete: R$ 19,99")
+                        print(f"3 - Slow: entrega em até {slow} dias | frete grátis")
+                        
+                        temperatura = clima.climatizacao()
+
+
+
+
 
                         while True:
 
-                            transporte = int(input("Escolha sua transportadora: "))
+                            transporte = inputt.inputNumeroInt("Escolha sua transportadora: ")
 
-                            if transporte == 1 and dinheiro >= 89.90:
-
-                                dinheiro -= fretes[0]
-
-                                print("Entrega Fast selecionada. Obrigado pela preferência!")
+                            if transporte == 1 and temperatura > 29:
+                                fast += 3
+                                print(f'Devido as altas temperaturas ({temperatura}C°), sua entrega chegará em {fast}dias.')
                                 break
-
-                            elif transporte == 2 and dinheiro >= 19.99:
-
-                                dinheiro -= fretes[1]
-
-                                print("Entrega Medium selecionada. Obrigado pela preferência!")
+                            elif transporte == 2 and temperatura > 29:
+                                medium += 3
+                                print(f'Devido as altas temperaturas ({temperatura}C°), sua entrega chegará em {medium}dias.')
                                 break
-
-                            elif transporte == 3:
-
-                                dinheiro -= fretes[2]
-
-                                print("Entrega Slow selecionada. Obrigado pela preferência!")
+                            elif transporte == 3 and temperatura > 29:
+                                slow += 3
+                                print(f'Devido as altas temperaturas ({temperatura}C°), sua entrega chegará em {slow}dias.')
                                 break
 
                             else:
@@ -263,7 +283,7 @@ def produtoC(produto,usuario_logado):
                                 print("Transportadora indisponível ou saldo insuficiente.")
                                 continue
 
-                    elif dinheiro < valor_final:
+                    elif saldo < valor_final:
 
                         p[2] += quantidade
 
@@ -276,7 +296,7 @@ def produtoC(produto,usuario_logado):
             
         else:
             print("Forma de pagamento inválida.")
-
+    
 def animalC(animal,usuario_logado):
     while True:
         achou=False
@@ -319,9 +339,9 @@ def animalC(animal,usuario_logado):
                     valor_desc = valor_total * desconto
                     valor_final = valor_total - valor_desc
 
-                    if dinheiro >= valor_final:
+                    if saldo >= valor_final:
 
-                        dinheiro -= valor_final
+                        saldo -= valor_final
                         with open ('logins.txt', 'r', encoding= 'utf -8')as arquivos:
                             linhas = arquivos.readlines()
                         with open ('logins.txt','w' , encoding= 'utf-8')as arquivos:
@@ -330,9 +350,9 @@ def animalC(animal,usuario_logado):
                                     continue
                                 nome,senha,saldo = linha.strip().split(',')
                                 if nome == usuario_logado:
-                                    saldo=dinheiro
+                                    saldo=saldo
                                 arquivos.write(f"{nome},{senha},{saldo}\n")
-                                return dinheiro
+                                return saldo
                         print(f"Sua compra foi realizada com sucesso! Valor final: R$ {valor_final}")
 
                         print(f"Produto adquirido:")
@@ -343,39 +363,32 @@ def animalC(animal,usuario_logado):
                         print(f"Valor: {valor_final}")
                         print("-"*50)
 
-                        fretes = [89.90, 19.99, 0]
-
+                        
+                        fast=8
+                        medium=16
+                        slow=30
                         print("Escolha a opção de entrega desejada:")
-                        print("1 - Fast: entrega em até 8 dias | frete: R$ 89,90")
-                        print("2 - Medium: entrega em até 16 dias | frete: R$ 19,99")
-                        print("3 - Slow: entrega em até 30 dias | frete grátis")
+                        print(f"1 - Fast: entrega em até {fast} dias | frete: R$ 89,90")
+                        print(f"2 - Medium: entrega em até {medium} dias | frete: R$ 19,99")
+                        print(f"3 - Slow: entrega em até {slow} dias | frete grátis")
+                        
+                        temperatura = clima.climatizacao()
 
                         while True:
 
-                            transporte = int(input("Escolha sua transportadora: "))
+                            transporte = inputt.inputNumeroInt("Escolha sua transportadora: ")
 
-                            if transporte == 1 and dinheiro >= 89.90:
-
-                                dinheiro -= fretes[0]
-
-                                print("Entrega Fast selecionada. Obrigado pela preferência!")
-                                animal.remove(animal[i])
+                            if transporte == 1 and temperatura > 29:
+                                fast += 3
+                                print(f'Devido as altas temperaturas ({temperatura}C°), sua entrega chegará em {fast}dias.')
                                 break
-
-                            elif transporte == 2 and dinheiro >= 19.99:
-
-                                dinheiro -= fretes[1]
-
-                                print("Entrega Medium selecionada. Obrigado pela preferência!")
-                                animal.remove(animal[i])
+                            elif transporte == 2 and temperatura > 29:
+                                medium += 3
+                                print(f'Devido as altas temperaturas ({temperatura}C°), sua entrega chegará em {medium}dias.')
                                 break
-
-                            elif transporte == 3:
-
-                                dinheiro -= fretes[2]
-
-                                print("Entrega Slow selecionada. Obrigado pela preferência!")
-                                animal.remove(animal[i])
+                            elif transporte == 3 and temperatura > 29:
+                                slow += 3
+                                print(f'Devido as altas temperaturas ({temperatura}C°), sua entrega chegará em {slow}dias.')
                                 break
 
                             else:
@@ -383,7 +396,7 @@ def animalC(animal,usuario_logado):
                                 print("Transportadora indisponível ou saldo insuficiente.")
                                 break
 
-                    elif dinheiro < valor_final:
+                    elif saldo < valor_final:
 
                     
 
@@ -427,9 +440,9 @@ def animalC(animal,usuario_logado):
                     valor_desc = valor_total * desconto
                     valor_final = valor_total - valor_desc
 
-                    if dinheiro >= valor_final:
+                    if saldo >= valor_final:
 
-                        dinheiro -= valor_final
+                        saldo -= valor_final
                         with open ('logins.txt', 'r', encoding= 'utf -8')as arquivos:
                             linhas = arquivos.readlines()
                         with open ('logins.txt','w' , encoding= 'utf-8')as arquivos:
@@ -438,9 +451,9 @@ def animalC(animal,usuario_logado):
                                     continue
                                 nome,senha,saldo = linha.strip().split(',')
                                 if nome == usuario_logado:
-                                    saldo=dinheiro
+                                    saldo=saldo
                                 arquivos.write(f"{nome},{senha},{saldo}\n")
-                                return dinheiro
+                                return saldo
                         
 
                         print(f"Sua compra foi realizada com sucesso! Valor final: R$ {valor_final}")
@@ -453,42 +466,36 @@ def animalC(animal,usuario_logado):
                         print(f"Valor: {valor_final}")
                         print("-"*50)
 
-                        print(f"Saldo atual da conta: R$ {dinheiro}")
+                        print(f"Saldo atual da conta: R$ {saldo}")
 
-                        fretes = [89.90, 19.99, 0]
-
+                        
+                        fast=8
+                        medium=16
+                        slow=30
                         print("Escolha a opção de entrega desejada:")
-                        print("1 - Fast: entrega em até 8 dias | frete: R$ 89,90")
-                        print("2 - Medium: entrega em até 16 dias | frete: R$ 19,99")
-                        print("3 - Slow: entrega em até 30 dias | frete grátis")
+                        print(f"1 - Fast: entrega em até {fast} dias | frete: R$ 89,90")
+                        print(f"2 - Medium: entrega em até {medium} dias | frete: R$ 19,99")
+                        print(f"3 - Slow: entrega em até {slow} dias | frete grátis")
+                        
+                        temperatura = clima.climatizacao()
 
                         while True:
 
-                            transporte = int(input("Escolha sua transportadora: "))
+                            transporte = inputt.inputNumeroInt("Escolha sua transportadora: ")
 
-                            if transporte == 1 and dinheiro >= 89.90:
-
-                                dinheiro -= fretes[0]
-
-                                print("Entrega Fast selecionada. Obrigado pela preferência!")
-                                animal.remove(animal[i])
+                            if transporte == 1 and temperatura > 29:
+                                fast += 3
+                                print(f'Devido as altas temperaturas ({temperatura}C°), sua entrega chegará em {fast}dias.')
+                                break
+                            elif transporte == 2 and temperatura > 29:
+                                medium += 3
+                                print(f'Devido as altas temperaturas ({temperatura}C°), sua entrega chegará em {medium}dias.')
+                                break
+                            elif transporte == 3 and temperatura > 29:
+                                slow += 3
+                                print(f'Devido as altas temperaturas ({temperatura}C°), sua entrega chegará em {slow}dias.')
                                 break
 
-                            elif transporte == 2 and dinheiro >= 19.99:
-
-                                dinheiro -= fretes[1]
-
-                                print("Entrega Medium selecionada. Obrigado pela preferência!")
-                                animal.remove(animal[i])
-                                break
-
-                            elif transporte == 3:
-
-                                dinheiro -= fretes[2]
-
-                                print("Entrega Slow selecionada. Obrigado pela preferência!")
-                                animal.remove(animal[i])
-                                break
 
                             else:
 
@@ -496,7 +503,7 @@ def animalC(animal,usuario_logado):
                                 break
                             
 
-                    elif dinheiro < valor_final:
+                    elif saldo < valor_final:
 
                         
 

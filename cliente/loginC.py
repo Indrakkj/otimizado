@@ -16,9 +16,9 @@ def loginUSUARIO():
                 
                 break
     if encontrado:
-        print("login encontrado")
+        print("Login encontrado")
         return nome
         
     else:
-        print("usuario nao encontrado")
-        return False          
+        print("Usuário não encontrado")
+                  
